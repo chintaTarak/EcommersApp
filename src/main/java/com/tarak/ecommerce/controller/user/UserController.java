@@ -1,6 +1,8 @@
 package com.tarak.ecommerce.controller.user;
 
+import com.tarak.ecommerce.dto.request.LoginRequest;
 import com.tarak.ecommerce.dto.request.RegisterRequest;
+import com.tarak.ecommerce.dto.response.LoginResponse;
 import com.tarak.ecommerce.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +32,13 @@ public class UserController {
                         "userId", userId
                 )
         );
+    }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid
+            @RequestBody LoginRequest request) {
+
+        return ResponseEntity.ok(
+                userService.login(request));
     }
 }

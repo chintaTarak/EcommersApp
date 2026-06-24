@@ -18,4 +18,14 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST
         );
     }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiResponse> handleInvalidCredentials(
+            InvalidCredentialsException ex) {
+
+        return new ResponseEntity<>(
+                new ApiResponse("FAILED", ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
 }
