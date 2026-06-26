@@ -3,7 +3,6 @@ package com.tarak.ecommerce.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
-
 import javax.crypto.SecretKey;
 import java.util.Date;
 
@@ -37,5 +36,34 @@ public class JwtService {
                                 + 1000L * 60 * 60 * 24 * 30))
                 .signWith(key)
                 .compact();
+    }
+    public String extractUsername(String token) {
+
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    public boolean isTokenValid(String token, String email) {
+
+        String username = extractUsername(token);
+
+        return username.equals(email)
+                && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+
+        Date expiration = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+
+        return expiration.before(new Date());
     }
 }

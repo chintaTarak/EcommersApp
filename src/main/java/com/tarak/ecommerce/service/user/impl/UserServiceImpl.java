@@ -2,10 +2,13 @@ package com.tarak.ecommerce.service.user.impl;
 
 import com.tarak.ecommerce.dto.request.LoginRequest;
 import com.tarak.ecommerce.dto.request.RegisterRequest;
+import com.tarak.ecommerce.dto.request.UpdateProfileRequest;
 import com.tarak.ecommerce.dto.response.LoginResponse;
+import com.tarak.ecommerce.dto.response.UserResponse;
 import com.tarak.ecommerce.entity.User;
 import com.tarak.ecommerce.exception.InvalidCredentialsException;
 import com.tarak.ecommerce.exception.ResourceAlreadyExistsException;
+import com.tarak.ecommerce.exception.ResourceNotFoundException;
 import com.tarak.ecommerce.repository.UserRepository;
 import com.tarak.ecommerce.security.JwtService;
 import com.tarak.ecommerce.service.user.UserService;
@@ -75,6 +78,44 @@ public class UserServiceImpl implements UserService {
 
         return LoginResponse.builder()
                 .token(token)
+                .refreshToken(refreshToken)
+                .build();
+    }
+    @Override
+    public UserResponse getProfile(String email) {
+
+        User user = repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return UserResponse.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .mobile(user.getMobile())
+                .build();
+    }
+    @Override
+    public UserResponse updateProfile(
+            String email,
+            UpdateProfileRequest request) {
+
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user.setName(request.getName());
+        user.setMobile(request.getMobile());
+
+        repository.save(user);
+
+        return getProfile(email);
+    }
+    @Override
+    public LoginResponse refreshToken(String refreshToken) {
+
+        String email =
+                jwtService.extractUsername(refreshToken);
+
+        return LoginResponse.builder()
+                .token(jwtService.generateToken(email))
                 .refreshToken(refreshToken)
                 .build();
     }
