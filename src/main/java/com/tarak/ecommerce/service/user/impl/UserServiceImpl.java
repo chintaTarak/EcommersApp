@@ -1,9 +1,16 @@
 package com.tarak.ecommerce.service.user.impl;
 
+import com.tarak.ecommerce.dto.request.LoginRequest;
 import com.tarak.ecommerce.dto.request.RegisterRequest;
+import com.tarak.ecommerce.dto.request.UpdateProfileRequest;
+import com.tarak.ecommerce.dto.response.LoginResponse;
+import com.tarak.ecommerce.dto.response.UserResponse;
 import com.tarak.ecommerce.entity.User;
+import com.tarak.ecommerce.exception.InvalidCredentialsException;
 import com.tarak.ecommerce.exception.ResourceAlreadyExistsException;
+import com.tarak.ecommerce.exception.ResourceNotFoundException;
 import com.tarak.ecommerce.repository.UserRepository;
+import com.tarak.ecommerce.security.JwtService;
 import com.tarak.ecommerce.service.user.UserService;
 import com.tarak.ecommerce.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Override
     public String register(RegisterRequest request) {
@@ -43,5 +51,72 @@ public class UserServiceImpl implements UserService {
         repository.save(user);
 
         return user.getUserId();
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+        User user = repository.findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new InvalidCredentialsException(
+                                "Invalid Email or Password"));
+
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
+            throw new InvalidCredentialsException(
+                    "Invalid Email or Password");
+        }
+
+        String token =
+                jwtService.generateToken(user.getEmail());
+
+        String refreshToken =
+                jwtService.generateRefreshToken(
+                        user.getEmail());
+
+        return LoginResponse.builder()
+                .token(token)
+                .refreshToken(refreshToken)
+                .build();
+    }
+    @Override
+    public UserResponse getProfile(String email) {
+
+        User user = repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return UserResponse.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .mobile(user.getMobile())
+                .build();
+    }
+    @Override
+    public UserResponse updateProfile(
+            String email,
+            UpdateProfileRequest request) {
+
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user.setName(request.getName());
+        user.setMobile(request.getMobile());
+
+        repository.save(user);
+
+        return getProfile(email);
+    }
+    @Override
+    public LoginResponse refreshToken(String refreshToken) {
+
+        String email =
+                jwtService.extractUsername(refreshToken);
+
+        return LoginResponse.builder()
+                .token(jwtService.generateToken(email))
+                .refreshToken(refreshToken)
+                .build();
     }
 }
