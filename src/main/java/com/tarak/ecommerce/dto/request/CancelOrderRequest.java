@@ -3,7 +3,7 @@ package com.tarak.ecommerce.dto.request;
 import lombok.Data;
 
 @Data
-public class RefundRequest {
+public class CancelOrderRequest {
 
-    private String paymentId;
+    private String orderId;
 }
