@@ -3,7 +3,7 @@ package com.tarak.ecommerce.dto.request;
 import lombok.Data;
 
 @Data
-public class RefundRequest {
+public class PaymentVerifyRequest {
 
     private String paymentId;
 }

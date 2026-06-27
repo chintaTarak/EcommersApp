@@ -1,14 +1,13 @@
-package com.tarak.ecommerce.entity;
+package com.tarak.ecommerce.dto.response;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class OrderItem {
+public class OrderItemResponse {
 
     private String productId;
 
