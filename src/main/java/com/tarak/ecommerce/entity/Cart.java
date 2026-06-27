@@ -1,4 +1,28 @@
 package com.tarak.ecommerce.entity;
 
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "carts")
 public class Cart {
+
+    @Id
+    private String id;
+
+    private String userId;
+
+    private List<CartItem> items;
+
+    private BigDecimal totalAmount;
+
+    private LocalDateTime updatedAt;
 }

@@ -1,4 +1,22 @@
 package com.tarak.ecommerce.service.cart;
 
-public class CartService {
+import com.tarak.ecommerce.dto.request.CartRequest;
+import com.tarak.ecommerce.dto.request.CartUpdateRequest;
+import com.tarak.ecommerce.dto.response.CartResponse;
+
+public interface CartService {
+
+    CartResponse addToCart(
+            String email,
+            CartRequest request);
+
+    CartResponse updateCart(
+            String email,
+            CartUpdateRequest request);
+
+    CartResponse getCart(String email);
+
+    void removeFromCart(
+            String email,
+            String productId);
 }

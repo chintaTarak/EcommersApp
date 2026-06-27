@@ -12,4 +12,12 @@ public class IdGenerator {
                         .substring(0, 8)
                         .toUpperCase();
     }
+    public static String generateProductId() {
+
+        return "PRD-" +
+                UUID.randomUUID()
+                        .toString()
+                        .substring(0, 8)
+                        .toUpperCase();
+    }
 }

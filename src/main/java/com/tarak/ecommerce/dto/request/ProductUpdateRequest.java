@@ -1,30 +1,22 @@
 package com.tarak.ecommerce.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
-public class ProductCreateRequest {
+public class ProductUpdateRequest {
 
-    @NotBlank
     private String productName;
 
-    @NotBlank
     private String description;
 
-    @NotBlank
     private String category;
 
-    @NotBlank
     private String brand;
 
-    @NotNull
     private BigDecimal price;
 
-    @NotNull
     private Integer quantity;
 
     private String imageUrl;
