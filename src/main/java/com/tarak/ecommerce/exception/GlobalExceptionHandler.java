@@ -28,4 +28,15 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNAUTHORIZED
         );
     }
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleNotFound(
+            ResourceNotFoundException ex) {
+
+        return new ResponseEntity<>(
+                new ApiResponse(
+                        "FAILED",
+                        ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
+    }
 }

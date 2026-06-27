@@ -3,7 +3,7 @@ package com.tarak.ecommerce.dto.request;
 import lombok.Data;
 
 @Data
-public class CartRequest {
+public class CartUpdateRequest {
 
     private String productId;
 
