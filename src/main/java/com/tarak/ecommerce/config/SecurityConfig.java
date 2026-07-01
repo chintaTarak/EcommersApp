@@ -32,7 +32,12 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/users/register",
                                 "/api/v1/users/login",
-                                "/api/v1/users/refresh-token")
+                                "/api/v1/users/refresh-token",
+                                "/api/v1/products",
+                                 // Swagger URLs
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
