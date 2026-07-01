@@ -9,6 +9,8 @@ import com.tarak.ecommerce.service.product.ProductService;
 import com.tarak.ecommerce.util.IdGenerator;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +23,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository repository;
 
     @Override
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public ProductResponse createProduct(
             ProductCreateRequest request) {
 
@@ -44,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "products")
     public List<ProductResponse> getAllProducts() {
 
         return repository.findAll()
@@ -77,6 +81,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public ProductResponse updateProduct(
             String productId,
             ProductUpdateRequest request) {
@@ -102,6 +107,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public void deleteProduct(String productId) {
 
         Product product = repository

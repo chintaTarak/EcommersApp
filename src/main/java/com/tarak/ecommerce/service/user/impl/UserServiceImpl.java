@@ -14,6 +14,8 @@ import com.tarak.ecommerce.security.JwtService;
 import com.tarak.ecommerce.service.user.UserService;
 import com.tarak.ecommerce.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     @Override
     public String register(RegisterRequest request) {
 
@@ -56,25 +58,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginResponse login(LoginRequest request) {
 
+        log.info("Registering user with email: {}", request.getEmail());
+        log.error("User not found");
         User user = repository.findByEmail(request.getEmail())
-                .orElseThrow(() ->
-                        new InvalidCredentialsException(
-                                "Invalid Email or Password"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid Email or Password"));
 
-        if (!passwordEncoder.matches(
-                request.getPassword(),
+        if (!passwordEncoder.matches(request.getPassword(),
                 user.getPassword())) {
 
             throw new InvalidCredentialsException(
                     "Invalid Email or Password");
         }
 
-        String token =
-                jwtService.generateToken(user.getEmail());
+        String token = jwtService.generateToken(user.getEmail());
 
-        String refreshToken =
-                jwtService.generateRefreshToken(
-                        user.getEmail());
+        String refreshToken = jwtService.generateRefreshToken(user.getEmail());
 
         return LoginResponse.builder()
                 .token(token)
